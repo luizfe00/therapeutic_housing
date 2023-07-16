@@ -1,0 +1,52 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { useEffect } from 'react'
+import { useAuthContext } from "../context/AuthContext";
+import { useRefreshToken } from "./useRefreshToken"
+import { axiosPrivate } from '../api/axios';
+import { AxiosRequestConfig } from 'axios';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+export const useAxiosPrivate = () => {
+    const refresh = useRefreshToken();
+    const { auth } = useAuthContext();
+    const navigate = useNavigate()
+    const location = useLocation()
+
+    useEffect(() => {
+        const requestIntercept = axiosPrivate.interceptors.request.use(
+            (config) => {
+                if (!config.headers['Authorization']) {
+                    config.headers['Authorization'] = `Bearer ${auth.token}`;
+                }
+                return config;
+            }, (error) => Promise.reject(error)
+        );
+
+        const responseIntercept = axiosPrivate.interceptors.response.use(
+            (response) => response,
+            async (error) => {
+                const prevRequest = error?.config;
+                if (error?.response?.status === 403 && !prevRequest?.sent) {
+                    prevRequest.sent = true;
+                    const newToken = await refresh();
+                    prevRequest.headers['Authorization'] = `Bearer ${newToken}`
+                    return axiosPrivate(prevRequest as AxiosRequestConfig);
+                }
+
+                if (error?.response?.status === 403) {
+                    navigate('/login', { state: { location }, replace: true })
+                }
+
+                return Promise.reject(error)
+            }
+        )
+
+        return () => {
+            axiosPrivate.interceptors.request.eject(requestIntercept);
+            axiosPrivate.interceptors.response.eject(responseIntercept)
+        }
+    }, [auth, refresh])
+
+    return axiosPrivate;
+}
