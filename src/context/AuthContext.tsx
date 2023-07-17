@@ -22,7 +22,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [auth, setAuth] = useState({
-        token: '',
+        token: localStorage.getItem('H_token') || '',
         user: null
     })
 

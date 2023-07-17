@@ -12,6 +12,7 @@ export const useRefreshToken = () => {
         const response = await axios.get<RefreshTokenResponse>('/refresh', {
             withCredentials: true
         })
+        localStorage.setItem('H_token', response.data.refresh_token);
         setAuth(response.data.refresh_token)
         return response.data.refresh_token
     }
