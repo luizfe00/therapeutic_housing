@@ -1,28 +1,34 @@
+import React from 'react';
+import { HeadCell, TableHeadProps } from '../ResidentList/ResidentTableHead';
+import { OrderBy } from '../ResidentList/ResidentList';
 import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import React from 'react';
-import { Order, OrderBy } from './ResidentList';
 import TableSortLabel from '@mui/material/TableSortLabel';
 
-export interface HeadCell {
-  disablePadding: boolean;
-  id: string;
-  label: string;
-  numeric: boolean;
-}
+const headCells: readonly HeadCell[] = [
+  {
+    id: 'name',
+    numeric: false,
+    disablePadding: true,
+    label: 'Nome',
+  },
+  {
+    id: 'document',
+    numeric: false,
+    disablePadding: true,
+    label: 'Documento',
+  },
+  {
+    id: 'birthDate',
+    numeric: false,
+    disablePadding: true,
+    label: 'Data de Nascimento',
+  },
+];
 
-export interface TableHeadProps {
-  numSelected: number;
-  onRequestSort: (event: React.MouseEvent<unknown>, property: OrderBy) => void;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: Order;
-  orderBy: string;
-  rowCount: number;
-}
-
-const ResidentTableHead: React.FC<TableHeadProps> = ({
+const CareTakerTableHeader: React.FC<TableHeadProps> = ({
   numSelected,
   onRequestSort,
   onSelectAllClick,
@@ -30,44 +36,10 @@ const ResidentTableHead: React.FC<TableHeadProps> = ({
   orderBy,
   rowCount,
 }) => {
-  const headCells: readonly HeadCell[] = [
-    {
-      id: 'name',
-      numeric: false,
-      disablePadding: true,
-      label: 'Nome',
-    },
-    {
-      id: 'document',
-      numeric: false,
-      disablePadding: true,
-      label: 'Documento',
-    },
-    {
-      id: 'birthDate',
-      numeric: false,
-      disablePadding: true,
-      label: 'Data de Nascimento',
-    },
-    {
-      id: 'shopping',
-      numeric: true,
-      disablePadding: true,
-      label: 'Compras/mês',
-    },
-    {
-      id: 'income',
-      numeric: true,
-      disablePadding: false,
-      label: 'Saldo/mês',
-    },
-  ];
-
   const createSortHandler =
     (property: OrderBy) => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property);
     };
-
   return (
     <TableHead>
       <TableRow>
@@ -85,7 +57,7 @@ const ResidentTableHead: React.FC<TableHeadProps> = ({
         {headCells.map((cell) => (
           <TableCell
             key={cell.id}
-            align={cell.numeric ? 'center' : 'left'}
+            align={cell.numeric ? 'right' : 'left'}
             padding={cell.disablePadding ? 'none' : 'normal'}
           >
             <TableSortLabel
@@ -101,4 +73,4 @@ const ResidentTableHead: React.FC<TableHeadProps> = ({
   );
 };
 
-export default ResidentTableHead;
+export default CareTakerTableHeader;

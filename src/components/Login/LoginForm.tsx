@@ -92,6 +92,9 @@ export const LoginForm = () => {
               })}
               error={!!errors.email}
               helperText={errors.email?.message}
+              sx={{
+                minHeight: '4rem',
+              }}
             />
             <TextField
               type="password"
@@ -112,6 +115,9 @@ export const LoginForm = () => {
               })}
               error={!!errors.password}
               helperText={errors.password?.message}
+              sx={{
+                minHeight: '4rem',
+              }}
             />
             <Link href="#" variant="body2">
               Esqueci minha senha
