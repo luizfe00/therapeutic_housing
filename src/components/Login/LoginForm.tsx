@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../context/AuthContext';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
-import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
+import Logo from '../Logo/Logo';
 
 export const LoginForm = () => {
   const navigate = useNavigate();
@@ -54,17 +54,7 @@ export const LoginForm = () => {
         </Alert>
       </Snackbar>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex">
-          <div className="rounded-lg h-12 w-12 bg-primary-blue flex justify-center items-center shadow-md">
-            <MonitorHeartOutlinedIcon
-              fontSize="large"
-              sx={{ color: '#F8F9FA' }}
-            />
-          </div>
-          <Typography variant="h6" display="flex" alignItems="center" ml={1}>
-            Residencias Terapeuticas
-          </Typography>
-        </div>
+        <Logo />
         <div className="mt-24">
           <Typography variant="h3">Log in</Typography>
           <Typography variant="subtitle2" className="text-gray-500" mt={1}>

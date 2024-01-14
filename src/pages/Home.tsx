@@ -1,15 +1,7 @@
-import ResidentList from '../components/ResidentList/ResidentList';
-import CaretakerList from '../components/CareTakerList/CareTakerList';
+import HomeContent from '../components/Home/HomeContent';
 
 const Home = () => {
-  return (
-    <div className="p-8">
-      <div className="grid grid-cols-1 gap-16">
-        <ResidentList />
-        <CaretakerList />
-      </div>
-    </div>
-  );
+  return <HomeContent />;
 };
 
 export default Home;
