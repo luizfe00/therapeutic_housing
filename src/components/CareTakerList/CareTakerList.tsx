@@ -1,9 +1,8 @@
-import { useState, useMemo } from 'react';
-import { getComparator, stableSort } from '../../util/TableUtil';
+import React, { useMemo, useState } from 'react';
+import { Order, OrderBy } from '../ResidentList/ResidentList';
 import Paper from '@mui/material/Paper';
 import TableContainer from '@mui/material/TableContainer';
 import Table from '@mui/material/Table';
-import ResidentTableHead from './ResidentTableHead';
 import TableBody from '@mui/material/TableBody';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
@@ -11,45 +10,18 @@ import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
 import TablePagination from '@mui/material/TablePagination';
 import Button from '@mui/material/Button';
-import { Delete, Create, Edit } from '@mui/icons-material';
-import { useQuery } from '@tanstack/react-query';
-import { useAxiosPrivate } from '../../hooks/useAxiosPrivate';
-import { ResidentsList } from '../../interfaces/IResident';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import { MAPPED_DATES } from '../../util/DateUtil';
-import TableButtonGroup from '../Table/TableButtonGroup';
+import { Delete, Edit, Create } from '@mui/icons-material';
+import { stableSort, getComparator } from '../../util/TableUtil';
+import CareTakerTableHeader from './CareTakerTableHeader';
+import { useAxiosPrivate } from '../../hooks/useAxiosPrivate';
 
-export type Order = 'asc' | 'desc';
-export type OrderBy =
-  | 'name'
-  | 'income'
-  | 'shopping'
-  | 'birthDate'
-  | ''
-  | 'document';
-
-const ResidentList = () => {
+const CareTakerList = () => {
   const axios = useAxiosPrivate();
-
-  const mapResidentsList = (data: ResidentsList[]) => {
-    const mappedResidents = data.map((resident) => ({
-      name: `${resident.firstName} ${resident.lastName}`,
-      document: resident.document,
-      birthDate: resident.birthDate,
-      shopping: 0,
-      income: 0,
-    }));
-    setRows(mappedResidents);
-  };
-
-  useQuery({
-    queryKey: ['residents_list'],
-    queryFn: () => axios.get<ResidentsList[]>('/resident/all'),
-    onSuccess: (response) => mapResidentsList(response.data),
-  });
 
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setorderBy] = useState<OrderBy>('');
@@ -58,7 +30,6 @@ const ResidentList = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState<any[]>([]);
   const [queryMonth, setQueryMonth] = useState<number>(new Date().getMonth());
-
   const handleRequestSort = (
     _event: React.MouseEvent<unknown>,
     property: OrderBy,
@@ -116,6 +87,14 @@ const ResidentList = () => {
     [order, orderBy, page, rowsPerPage, rows],
   );
 
+  const buildMonthList = () => {
+    const currentMonth = new Date().getMonth();
+    const monthsUpToNow = MAPPED_DATES.slice(0, currentMonth + 1);
+    return monthsUpToNow.map((month, index) => (
+      <MenuItem value={index}>{month}</MenuItem>
+    ));
+  };
+
   const handleQueryMonthChange = (event: SelectChangeEvent<number>) => {
     const value = event.target.value as number;
     setQueryMonth(value);
@@ -124,21 +103,28 @@ const ResidentList = () => {
   return (
     <div className="w-full">
       <div className="flex justify-between pb-2 align-baseline">
-        <Typography variant="h6">Residentes</Typography>
-        <TableButtonGroup
-          handleQueryMonthChange={handleQueryMonthChange}
-          queryMonth={queryMonth}
-          downloadPdf
-        />
+        <Typography variant="h6">Cuidadores</Typography>
+        <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+          <InputLabel id="query-month-picker">Mês</InputLabel>
+          <Select
+            labelId="query-month-picker"
+            id="month-picker"
+            value={queryMonth}
+            label="month"
+            onChange={handleQueryMonthChange}
+          >
+            {buildMonthList()}
+          </Select>
+        </FormControl>
       </div>
       <Paper className="w-full mb-2">
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
-            aria-labelledby="Residentes"
+            aria-labelledby="Cuidadores"
             size="medium"
           >
-            <ResidentTableHead
+            <CareTakerTableHeader
               numSelected={selected.length}
               onRequestSort={handleRequestSort}
               onSelectAllClick={handleSelectAllClick}
@@ -149,7 +135,7 @@ const ResidentList = () => {
             <TableBody>
               {visibleRows.map((row, index) => {
                 const isItemSelected = isSelected(row.name as string);
-                const labelId = `resident-table-checkbox-${index}`;
+                const labelId = `caretaker-table-checkbox-${index}`;
 
                 return (
                   <TableRow
@@ -181,8 +167,6 @@ const ResidentList = () => {
                     </TableCell>
                     <TableCell>{row.document}</TableCell>
                     <TableCell>{row.birthDate}</TableCell>
-                    <TableCell align="center">{row.shopping}</TableCell>
-                    <TableCell align="center">{row.income}</TableCell>
                   </TableRow>
                 );
               })}
@@ -223,4 +207,4 @@ const ResidentList = () => {
   );
 };
 
-export default ResidentList;
+export default CareTakerList;
