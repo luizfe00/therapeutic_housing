@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AccessibilityIcon from '@mui/icons-material/Accessibility';
-import Logo from '../Logo/Logo';
+import Logo from '../Logo/Logo.component.tsx';
 
 const featureOptions = [
   {

@@ -1,5 +1,4 @@
-import Home from '../pages/Home';
-import Login from '../pages/Login';
+import { Home, Login } from '../pages';
 
 type IRoute = {
   path: string;

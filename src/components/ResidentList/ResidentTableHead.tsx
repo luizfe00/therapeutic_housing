@@ -96,6 +96,9 @@ const ResidentTableHead: React.FC<TableHeadProps> = ({
             {cell.label}
           </TableCell>
         ))}
+        <TableCell key="actions" align="center">
+          Actions
+        </TableCell>
       </TableRow>
     </TableHead>
   );

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { getComparator, stableSort } from '../../util/TableUtil';
 import Paper from '@mui/material/Paper';
 import TableContainer from '@mui/material/TableContainer';
@@ -11,16 +11,16 @@ import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
 import TablePagination from '@mui/material/TablePagination';
 import Button from '@mui/material/Button';
-import { Delete, Create, Edit } from '@mui/icons-material';
+import { SelectChangeEvent } from '@mui/material/Select';
 import { useQuery } from '@tanstack/react-query';
 import { useAxiosPrivate } from '../../hooks/useAxiosPrivate';
 import { ResidentsList } from '../../interfaces/IResident';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import { MAPPED_DATES } from '../../util/DateUtil';
 import TableButtonGroup from '../Table/TableButtonGroup';
+import IconButton from '@mui/material/IconButton';
+import ListIcon from '@mui/icons-material/List';
+import Create from '@mui/icons-material/Create';
+import Delete from '@mui/icons-material/Delete';
+import { MenuItem, Menu } from '@mui/material';
 
 export type Order = 'asc' | 'desc';
 export type OrderBy =
@@ -58,6 +58,16 @@ const ResidentList = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState<any[]>([]);
   const [queryMonth, setQueryMonth] = useState<number>(new Date().getMonth());
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClickMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
 
   const handleRequestSort = (
     _event: React.MouseEvent<unknown>,
@@ -78,7 +88,7 @@ const ResidentList = () => {
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent, name: string) => {
+  const handleClick = (_event: React.MouseEvent, name: string) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected: readonly string[] = [];
     if (selectedIndex === -1) {
@@ -92,6 +102,9 @@ const ResidentList = () => {
         selected.slice(0, selectedIndex),
         selected.slice(selectedIndex + 1),
       );
+    }
+    if (selected.length === 1 && selected.includes(name)) {
+      newSelected = [];
     }
     setSelected(newSelected);
   };
@@ -183,6 +196,24 @@ const ResidentList = () => {
                     <TableCell>{row.birthDate}</TableCell>
                     <TableCell align="center">{row.shopping}</TableCell>
                     <TableCell align="center">{row.income}</TableCell>
+                    <TableCell align="center">
+                      <IconButton
+                        title="actions"
+                        color="default"
+                        onClick={handleClickMenu}
+                        aria-haspopup="true"
+                      >
+                        <ListIcon />
+                      </IconButton>
+                      <Menu
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleCloseMenu}
+                      >
+                        <MenuItem>Editar</MenuItem>
+                        <MenuItem>Deletar</MenuItem>
+                      </Menu>
+                    </TableCell>
                   </TableRow>
                 );
               })}
@@ -209,12 +240,13 @@ const ResidentList = () => {
         />
       </Paper>
       <div className="w-full flex justify-end gap-4">
-        <Button variant="outlined" color="error" startIcon={<Delete />}>
-          Deletar
-        </Button>
-        <Button variant="contained" color="success" startIcon={<Edit />}>
-          Editar
-        </Button>
+        {selected.length ? (
+          <Button variant="outlined" color="error" startIcon={<Delete />}>
+            Deletar
+          </Button>
+        ) : (
+          <></>
+        )}
         <Button variant="contained" color="primary" startIcon={<Create />}>
           Criar
         </Button>

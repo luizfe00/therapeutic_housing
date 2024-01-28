@@ -1,5 +1,6 @@
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 import { Typography } from '@mui/material';
+import { LogoContainer, LogoRoundedWrapper } from './Logo.styles';
 
 type LogoProps = {
   fontSize?: 'large' | 'medium' | 'small';
@@ -7,10 +8,17 @@ type LogoProps = {
 
 const Logo = ({ fontSize = 'large' }: LogoProps) => {
   const getIconSize = () => {
-    if (fontSize === 'large') return 'h-12 w-12';
-    if (fontSize === 'medium') return 'h-10 w-10';
-    if (fontSize === 'small') return 'h-8 w-8';
-    return '';
+    let height = '1rem';
+    let width = '1rem';
+    if (fontSize === 'large') {
+      height = '4rem';
+      width = '4rem';
+    }
+    if (fontSize === 'medium') {
+      height = '2rem';
+      width = '2rem';
+    }
+    return { height, width };
   };
 
   const getTextVariant = () => {
@@ -21,15 +29,16 @@ const Logo = ({ fontSize = 'large' }: LogoProps) => {
   };
 
   return (
-    <div className="flex">
-      <div
-        className={`rounded-lg ${getIconSize()} bg-primary-blue flex justify-center items-center shadow-md`}
+    <LogoContainer className="flex">
+      <LogoRoundedWrapper
+        iconSizeHeight={getIconSize().height}
+        iconSizeWidth={getIconSize().width}
       >
         <MonitorHeartOutlinedIcon
           fontSize={fontSize}
           sx={{ color: '#F8F9FA' }}
         />
-      </div>
+      </LogoRoundedWrapper>
       <Typography
         variant={getTextVariant()}
         display="flex"
@@ -38,7 +47,7 @@ const Logo = ({ fontSize = 'large' }: LogoProps) => {
       >
         Residencias Terapeuticas
       </Typography>
-    </div>
+    </LogoContainer>
   );
 };
 
